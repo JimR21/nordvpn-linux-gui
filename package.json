@@ -1,6 +1,6 @@
 {
   "name": "nordvpn-linux-gui",
-  "productName": "NordVPN Linux Gui",
+  "productName": "NordVPN",
   "version": "1.0.0",
   "description": "Linux GUI for NordVPN CLI",
   "license": "MIT",
