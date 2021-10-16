@@ -82,7 +82,7 @@ export default function LogIn() {
               sx={{ mt: 3, mb: 2 }}>
               Sign In
             </Button>
-            {helperText}
+            {loginError ? <Alert severity="error">{helperText}</Alert> : null}
           </Box>
         </Box>
       </Container>
