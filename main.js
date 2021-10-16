@@ -83,6 +83,7 @@ app.on("activate", () => {
 ipcMain.on("cli:is-logged-in", sendLoggedIn);
 
 ipcMain.on("cli:credentials", (e, credentials) => {
+  console.log(credentials);
   sendLoginResult(credentials.email, credentials.password);
 });
 
@@ -101,10 +102,19 @@ function sendLoggedIn() {
 // Send login result to window
 function sendLoginResult(email, password) {
   cliLoginWithCredentials(email, password, (output) => {
+    console.log(`Checking credentials: ${output}`);
     if (output.includes("Username or password is not correct.")) {
-      mainWindow.webContents.send("cli:wrong-credentials");
+      mainWindow.webContents.send(
+        "cli:login-error",
+        "Username or password is not correct. Please try again."
+      );
     } else if (output.includes("Welcome to NordVPN!")) {
       mainWindow.webContents.send("cli:logged-in", true);
+    } else if (output.includes("We're having trouble reaching our servers.")) {
+      mainWindow.webContents.send(
+        "cli:login-error",
+        "NordVPN CLI: We're having trouble reaching our servers."
+      );
     } else {
       console.error(
         `Login with credentials returned unknown output: ${output}`

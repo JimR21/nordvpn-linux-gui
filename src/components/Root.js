@@ -1,3 +1,4 @@
+import { Alert, Snackbar } from "@mui/material";
 import { ipcRenderer } from "electron";
 import React, { useEffect, useState } from "react";
 import Dashboard from "./Dashboard";

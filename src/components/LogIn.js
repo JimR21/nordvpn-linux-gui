@@ -9,12 +9,21 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { ipcRenderer } from "electron";
-import { Alert } from "@mui/material";
+import { Alert, CircularProgress, Grid, Snackbar } from "@mui/material";
 
 const theme = createTheme();
 
 export default function LogIn() {
   const [loginError, setLoginError] = useState(false);
+  const [loader, setLoader] = useState(false);
+
+  useEffect(() => {
+    ipcRenderer.on("cli:login-error", (e, errMsg) => {
+      console.log("Login error");
+      setLoginError(errMsg);
+      setLoader(false);
+    });
+  }, [loginError]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -25,69 +34,76 @@ export default function LogIn() {
     };
 
     // Send credentials to main
+    console.log("Sending credentials");
     ipcRenderer.send("cli:credentials", credentials);
-    ipcRenderer.on("cli:wrong-credentials", (e) => {
-      setLoginError(true);
-    });
+    setLoader(true);
   };
 
   return (
-    <ThemeProvider theme={theme}>
-      <Container component="main" maxWidth="xs">
-        <CssBaseline />
-        <Box
-          sx={{
-            marginTop: 8,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}>
-          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-            <LockOutlinedIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5">
-            Log in
-          </Typography>
-          <Box
-            component="form"
-            onSubmit={handleSubmit}
-            noValidate
-            sx={{ mt: 1 }}>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
-              autoFocus
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-            />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}>
-              Sign In
-            </Button>
-            {loginError ? (
-              <Alert severity="error">
-                Wrong credentials, please try again.
-              </Alert>
+    <Container component="main" maxWidth="xs">
+      <CssBaseline />
+      <Box
+        sx={{
+          marginTop: 8,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}>
+        <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+          <LockOutlinedIcon />
+        </Avatar>
+        <Typography component="h1" variant="h5">
+          Log in
+        </Typography>
+        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="email"
+            label="Email Address"
+            name="email"
+            autoComplete="email"
+            autoFocus
+          />
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            name="password"
+            label="Password"
+            type="password"
+            id="password"
+            autoComplete="current-password"
+          />
+          <Grid container columnSpacing={5} sx={{ mt: 3, mb: 2 }}>
+            <Grid item xs={5}>
+              <Button type="submit" fullWidth variant="contained">
+                Sign In
+              </Button>
+            </Grid>
+            {loader ? (
+              <Grid item xs={1}>
+                <Box>
+                  <CircularProgress />
+                </Box>
+              </Grid>
             ) : null}
-          </Box>
+          </Grid>
         </Box>
-      </Container>
-    </ThemeProvider>
+      </Box>
+      <div>
+        {loginError ? (
+          <Snackbar
+            open={true}
+            autoHideDuration={6000}
+            onClose={() => setLoginError(null)}>
+            <Alert severity="error" sx={{ width: "100%" }}>
+              {loginError}
+            </Alert>
+          </Snackbar>
+        ) : null}
+      </div>
+    </Container>
   );
 }
