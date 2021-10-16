@@ -82,6 +82,12 @@ app.on("activate", () => {
 /* IPC listeners */
 ipcMain.on("cli:is-logged-in", sendLoggedIn);
 
+ipcMain.on("cli:credentials", (e, credentials) => {
+  sendLoginResult(credentials.email, credentials.password);
+});
+
+ipcMain.on("cli:logout", sendLogoutResult);
+
 // Send to window if user is logged in
 function sendLoggedIn() {
   cliLogin((output) => {
@@ -92,10 +98,6 @@ function sendLoggedIn() {
   });
 }
 
-ipcMain.on("cli:credentials", (e, credentials) => {
-  sendLoginResult(credentials.email, credentials.password);
-});
-
 // Send login result to window
 function sendLoginResult(email, password) {
   cliLoginWithCredentials(email, password, (output) => {
@@ -104,7 +106,21 @@ function sendLoginResult(email, password) {
     } else if (output.includes("Welcome to NordVPN!")) {
       mainWindow.webContents.send("cli:logged-in", true);
     } else {
-      console.error(`Login with credentials returned uknown output: ${output}`);
+      console.error(
+        `Login with credentials returned unknown output: ${output}`
+      );
+    }
+  });
+}
+
+// Send logout result to window
+function sendLogoutResult() {
+  cliLogout((output) => {
+    if (output.includes("You are logged out.")) {
+      // mainWindow.webContents.send("cli:is-logged-in", false);
+      console.log("Logged out successfully");
+    } else {
+      console.error(`Error while attempting to logout. Output: ${output}`);
     }
   });
 }
@@ -116,6 +132,10 @@ function cliLogin(callback) {
 
 function cliLoginWithCredentials(email, password, callback) {
   execute(`nordvpn login -u ${email} -p ${password}`, callback);
+}
+
+function cliLogout(callback) {
+  execute("nordvpn logout", callback);
 }
 
 // This function will output the lines from the script

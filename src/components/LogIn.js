@@ -14,7 +14,6 @@ import { Alert } from "@mui/material";
 const theme = createTheme();
 
 export default function LogIn() {
-  const [helperText, setHelperText] = useState("");
   const [loginError, setLoginError] = useState(false);
 
   const handleSubmit = (event) => {
@@ -29,7 +28,6 @@ export default function LogIn() {
     ipcRenderer.send("cli:credentials", credentials);
     ipcRenderer.on("cli:wrong-credentials", (e) => {
       setLoginError(true);
-      setHelperText("Wrong credentials, please try again.");
     });
   };
 
@@ -82,7 +80,11 @@ export default function LogIn() {
               sx={{ mt: 3, mb: 2 }}>
               Sign In
             </Button>
-            {loginError ? <Alert severity="error">{helperText}</Alert> : null}
+            {loginError ? (
+              <Alert severity="error">
+                Wrong credentials, please try again.
+              </Alert>
+            ) : null}
           </Box>
         </Box>
       </Container>
