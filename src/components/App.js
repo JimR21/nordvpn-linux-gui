@@ -1,13 +1,33 @@
-import React from "react";
-import Button from "@mui/material/Button";
+import React, { useEffect, useState } from "react";
+import { ipcRenderer } from "electron";
+import LogIn from "./LogIn";
+import { Container } from "@mui/material";
+import { Grid3x3 } from "@mui/icons-material";
+import Dashboard from "./Dashboard";
+
+ipcRenderer.on("cli-login", (event, data) => {
+  console.log("Caught cli-login");
+  console.log(data.output);
+});
 
 const App = () => {
+  const [loggedIn, setloggedIn] = useState(false);
+
+  useEffect(() => {
+    ipcRenderer.send("cli:is-logged-in");
+    ipcRenderer.on("cli:logged-in", (e, loggedIn) => {
+      console.log(`loggedIn: ${loggedIn}`);
+      setloggedIn(loggedIn);
+    });
+  }, []);
+
+  if (!loggedIn) {
+    return <LogIn></LogIn>;
+  }
   return (
-    <div className="app">
-      <h1>React Electron Boilerplate</h1>
-      <p>This is a simple boilerplate for using React with Electron</p>
-      <Button variant="contained">Hello</Button>
-    </div>
+    <Container>
+      <Dashboard></Dashboard>
+    </Container>
   );
 };
 
