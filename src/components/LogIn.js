@@ -19,7 +19,6 @@ export default function LogIn() {
 
   useEffect(() => {
     ipcRenderer.on("cli:login-error", (e, errMsg) => {
-      console.log("Login error");
       setLoginError(errMsg);
       setLoader(false);
     });
@@ -34,8 +33,7 @@ export default function LogIn() {
     };
 
     // Send credentials to main
-    console.log("Sending credentials");
-    ipcRenderer.send("cli:credentials", credentials);
+    ipcRenderer.send("cli:login", credentials);
     setLoader(true);
   };
 

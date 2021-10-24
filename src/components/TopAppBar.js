@@ -6,11 +6,10 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import { ipcRenderer } from "electron";
 
-export default function TopAppBar({ logoutAction }) {
+export default function TopAppBar() {
   const handleLogoutClick = (event) => {
-    // Send credentials to main
+    // Send logout action to main
     ipcRenderer.send("cli:logout");
-    logoutAction(false);
   };
 
   return (

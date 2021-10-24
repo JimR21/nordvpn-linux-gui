@@ -82,8 +82,7 @@ app.on("activate", () => {
 /* IPC listeners */
 ipcMain.on("cli:is-logged-in", sendLoggedIn);
 
-ipcMain.on("cli:credentials", (e, credentials) => {
-  console.log(credentials);
+ipcMain.on("cli:login", (e, credentials) => {
   sendLoginResult(credentials.email, credentials.password);
 });
 
@@ -127,8 +126,8 @@ function sendLoginResult(email, password) {
 function sendLogoutResult() {
   cliLogout((output) => {
     if (output.includes("You are logged out.")) {
-      // mainWindow.webContents.send("cli:is-logged-in", false);
       console.log("Logged out successfully");
+      mainWindow.webContents.send("cli:logged-in", false);
     } else {
       console.error(`Error while attempting to logout. Output: ${output}`);
     }
