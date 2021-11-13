@@ -15,7 +15,7 @@ export const CountryServerGroup = ({ countryGroup }) => {
   const vpnServerListItem = (countryGroup) => {
     const listItems = [];
     countryGroup.forEach((server) => {
-      listItems.push(<VpnServerListItem key={server.domain} server={server} />);
+      listItems.push(<VpnServerListItem key={server.id} server={server} />);
     });
     return listItems;
   };
