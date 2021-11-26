@@ -61,8 +61,9 @@
 
 <!-- [![Product Name Screen Shot][product-screenshot]](https://example.com) -->
 
-<P>The application offers a login screen and the main window where you can choose the server grouped by country.<br />
+<p>The application offers a login screen and the main window where you can choose the server grouped by country.<br />
 The login and the connection to the server is achieved through the official NordVPN CLI. See <a href="https://nordvpn.com/blog/nordvpn-linux-release-notes/">Release Notes</a></p>
+<p>The list of available servers is retrieved via the NordVPN API. I could only find an <a href="https://www.rubydoc.info/gems/nordvpn-api/0.1.0/Nordvpn/Api/Endpoints/Servers">unofficial documentation</a></p>
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -103,13 +104,13 @@ You need node.js and npm to run the source code. See <a href="https://docs.npmjs
 
 <!-- USAGE EXAMPLES -->
 
-## Usage
+<!-- ## Usage
 
 Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
 
 _For more examples, please refer to the [Documentation](https://example.com)_
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+<p align="right">(<a href="#top">back to top</a>)</p> -->
 
 <!-- ROADMAP -->
 
