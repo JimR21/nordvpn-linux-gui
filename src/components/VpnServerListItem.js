@@ -8,7 +8,10 @@ function VpnServerListItem({ server }) {
       <ListItemIcon>
         <PublicIcon sx={{ color: "white" }} />
       </ListItemIcon>
-      <ListItemText primary={server.domain} />
+      <ListItemText
+        primary={server.domain}
+        secondary={`Load: ${server.load}%`}
+      />
     </ListItemButton>
   );
 }

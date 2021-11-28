@@ -21,7 +21,7 @@ function createMainWindow() {
     width: isDev ? 1400 : 1100,
     height: 800,
     show: false,
-    icon: `${__dirname}/assets/icon.png`,
+    icon: `${__dirname}/assets/nord-icon-152x152.png`,
     webPreferences: {
       nodeIntegration: true,
     },

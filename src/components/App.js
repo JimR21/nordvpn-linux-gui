@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { ThemeProvider } from "@mui/material/styles";
-import theme from "./CustomTheme";
-import Root from "./Root";
 import { CssBaseline } from "@mui/material";
 import StyledEngineProvider from "@mui/material/StyledEngineProvider";
+import { ThemeProvider } from "@mui/material/styles";
+import React from "react";
+import theme from "./CustomTheme";
+import Root from "./Root";
 
 const App = () => {
   return (
