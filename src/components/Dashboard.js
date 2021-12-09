@@ -11,8 +11,6 @@ const Dashboard = () => {
 
   useEffect(() => {
     ipcRenderer.on("cli:status", (e, status) => {
-      console.log("Received status");
-      console.log(status);
       setConnectedServer(status);
     });
   }, []);

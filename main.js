@@ -67,7 +67,6 @@ function createMainWindow() {
 
     // Start sending checking the VPN status
     setInterval(() => {
-      console.log("Checking status");
       sendUpdatedVpnStatus();
     }, 5000);
   });
@@ -99,6 +98,8 @@ ipcMain.on("cli:login", (e, credentials) => {
 ipcMain.on("cli:logout", logoutAndSendResult);
 
 ipcMain.on("cli:quick-connect", quickConnect);
+
+ipcMain.on("cli:disconnect", disconnect);
 
 // Send to window if user is logged in
 function sendLoggedIn() {
@@ -146,14 +147,23 @@ function logoutAndSendResult() {
 
 // Connect
 function quickConnect() {
-  console.log("Received quick connect");
   cliQuickConnect((output) => {
     if (output.includes("You are not logged in")) {
-      console.log("Tried to connect but user is logged out");
+      // Send login flag set to false
+      console.log("Tried to connect but the user is logged out");
       mainWindow.webContents.send("cli:logged-in", false);
     }
-    console.log("Ran quick connect");
-    console.log(output);
+  });
+}
+
+// Connect
+function disconnect() {
+  cliDisconnect((output) => {
+    if (output.includes("You are not connected to NordVPN")) {
+      // Send login flag set to false
+      console.log("Tried to disconnect but the user is logged out");
+      mainWindow.webContents.send("cli:logged-in", false);
+    }
   });
 }
 
@@ -188,11 +198,9 @@ let currentVpnStatus = false;
 // Send VPN status result to window
 function sendUpdatedVpnStatus() {
   cliStatus((output) => {
-    console.log(output);
     if (output.includes("Disconnected")) {
       // Send only if the status was previously connected
       if (currentVpnStatus) {
-        console.log("Sending disconnected");
         mainWindow.webContents.send("cli:status", false);
         currentVpnStatus = false;
       }
@@ -211,7 +219,6 @@ function sendUpdatedVpnStatus() {
         newVpnStatus.status == "Connected" &&
         (!currentVpnStatus || currentVpnStatus.server != newVpnStatus.server)
       ) {
-        console.log("Sending connected");
         mainWindow.webContents.send("cli:status", new ServerStatus(match));
         currentVpnStatus = newVpnStatus;
       }
@@ -254,6 +261,10 @@ function cliStatus(callback) {
 
 function cliQuickConnect(callback) {
   execute("nordvpn connect", callback);
+}
+
+function cliDisconnect(callback) {
+  execute("nordvpn disconnect", callback);
 }
 
 /* Nord API calls */

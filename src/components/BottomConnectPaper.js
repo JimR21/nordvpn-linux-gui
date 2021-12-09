@@ -9,10 +9,19 @@ const ConnectButton = styled(Button)(({ theme }) => ({
   whiteSpace: "nowrap",
 }));
 
+const DisconnectButton = styled(Button)(({ theme }) => ({
+  color: "white",
+  whiteSpace: "nowrap",
+}));
+
 const handleQuickConnectClick = (event) => {
   // Send quick connect action to main
-  console.log("Sending quick connect to main");
   ipcRenderer.send("cli:quick-connect");
+};
+
+const handleDisconnectClick = (event) => {
+  // Send disconnect action to main
+  ipcRenderer.send("cli:disconnect");
 };
 
 export default function BottomConnectPaper({ connectedServer }) {
@@ -39,12 +48,21 @@ export default function BottomConnectPaper({ connectedServer }) {
               {connectedServer ? connectedServer.status : "Disconnected"}
             </Grid>
             <Grid item xs={4}>
-              <ConnectButton
-                variant="contained"
-                color="success"
-                onClick={handleQuickConnectClick}>
-                Quick Connect
-              </ConnectButton>
+              {connectedServer ? (
+                <DisconnectButton
+                  variant="contained"
+                  color="error"
+                  onClick={handleDisconnectClick}>
+                  Disconnect
+                </DisconnectButton>
+              ) : (
+                <ConnectButton
+                  variant="contained"
+                  color="success"
+                  onClick={handleQuickConnectClick}>
+                  Quick Connect
+                </ConnectButton>
+              )}
             </Grid>
           </Grid>
         </Container>
