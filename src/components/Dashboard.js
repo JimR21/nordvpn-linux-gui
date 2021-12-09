@@ -10,10 +10,12 @@ const Dashboard = () => {
   const [connectedServer, setConnectedServer] = useState(false);
 
   useEffect(() => {
-    ipcRenderer.on("cli:get-status", (e, status) => {
+    ipcRenderer.on("cli:status", (e, status) => {
+      console.log("Received status");
+      console.log(status);
       setConnectedServer(status);
     });
-  });
+  }, []);
 
   return (
     <div>
@@ -30,7 +32,7 @@ const Dashboard = () => {
               <ServersList />
             </Grid>
             <Grid item xs={9}>
-              <MainWindow />
+              <MainWindow connectedServer={connectedServer} />
             </Grid>
           </Grid>
         </Box>

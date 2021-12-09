@@ -2,10 +2,10 @@ import { Container, Paper } from "@mui/material";
 import React from "react";
 import BottomConnectPaper from "./BottomConnectPaper";
 
-function MainWindow() {
+function MainWindow({ connectedServer }) {
   return (
     <Container>
-      <BottomConnectPaper />
+      <BottomConnectPaper connectedServer={connectedServer} />
     </Container>
   );
 }

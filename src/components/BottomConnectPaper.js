@@ -8,7 +8,7 @@ const ConnectButton = styled(Button)(({ theme }) => ({
   whiteSpace: "nowrap",
 }));
 
-export default function BottomConnectPaper() {
+export default function BottomConnectPaper({ connectedServer }) {
   return (
     <Paper
       elevation={6}
@@ -29,7 +29,7 @@ export default function BottomConnectPaper() {
         <Container>
           <Grid container>
             <Grid item xs={8}>
-              Connected
+              {connectedServer ? connectedServer.status : "Disconnected"}
             </Grid>
             <Grid item xs={4}>
               <ConnectButton variant="contained" color="success">

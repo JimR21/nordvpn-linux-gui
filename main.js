@@ -20,6 +20,8 @@ function createMainWindow() {
   mainWindow = new BrowserWindow({
     width: isDev ? 1400 : 1100,
     height: 800,
+    minWidth: 1000,
+    minHeight: 700,
     show: false,
     icon: `${__dirname}/assets/nord-icon-152x152.png`,
     webPreferences: {
@@ -62,6 +64,12 @@ function createMainWindow() {
       );
       mainWindow.webContents.openDevTools();
     }
+
+    // Start sending checking the VPN status
+    setInterval(() => {
+      console.log("Checking status");
+      sendUpdatedVpnStatus();
+    }, 5000);
   });
 
   mainWindow.on("closed", () => (mainWindow = null));
@@ -160,6 +168,58 @@ function sendServers(servers) {
   );
 }
 
+let currentVpnStatus = false;
+
+// Send VPN status result to window
+function sendUpdatedVpnStatus() {
+  cliStatus((output) => {
+    console.log(output);
+    if (output.includes("Disconnected")) {
+      // Send only if the status was previously connected
+      if (currentVpnStatus) {
+        console.log("Sending disconnected");
+        mainWindow.webContents.send("cli:status", false);
+        currentVpnStatus = false;
+      }
+    } else {
+      let regex =
+        /Status: (.+?)\nCurrent server: (.+?)\nCountry: (.+?)\nCity: (.+?)\nServer IP: (.+?)\nCurrent technology: (.+?)\nCurrent protocol: (.+?)\n/gm;
+      let match = regex.exec(output);
+      if (match == null || match.length != 8) {
+        console.error(
+          `Error while attempting to get the VPN status. Output: ${output}`
+        );
+      }
+      let newVpnStatus = new ServerStatus(match);
+      // Send only if it's a connection to a new server
+      if (
+        newVpnStatus.status == "Connected" &&
+        (!currentVpnStatus || currentVpnStatus.server != newVpnStatus.server)
+      ) {
+        console.log("Sending connected");
+        mainWindow.webContents.send("cli:status", new ServerStatus(match));
+        currentVpnStatus = newVpnStatus;
+      }
+    }
+  });
+}
+
+class ServerStatus {
+  constructor(match) {
+    this.status = match[1];
+    this.server = match[2];
+    this.country = match[3];
+    this.city = match[4];
+    this.serverIp = match[5];
+    this.technology = match[6];
+    this.protocol = match[7];
+
+    //add in this object's "type" in a place
+    //that is unlikely to exist in other JSON strings
+    this.__type = "ServerStatus";
+  }
+}
+
 /* NordVPN CLI commands */
 function cliLogin(callback) {
   execute("nordvpn login", callback);
@@ -171,6 +231,10 @@ function cliLoginWithCredentials(email, password, callback) {
 
 function cliLogout(callback) {
   execute("nordvpn logout", callback);
+}
+
+function cliStatus(callback) {
+  execute("nordvpn status", callback);
 }
 
 /* Nord API calls */
