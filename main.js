@@ -96,7 +96,9 @@ ipcMain.on("cli:login", (e, credentials) => {
   sendLoginResult(credentials.email, credentials.password);
 });
 
-ipcMain.on("cli:logout", sendLogoutResult);
+ipcMain.on("cli:logout", logoutAndSendResult);
+
+ipcMain.on("cli:quick-connect", quickConnect);
 
 // Send to window if user is logged in
 function sendLoggedIn() {
@@ -132,13 +134,26 @@ function sendLoginResult(email, password) {
 }
 
 // Send logout result to window
-function sendLogoutResult() {
+function logoutAndSendResult() {
   cliLogout((output) => {
     if (output.includes("You are logged out.")) {
       mainWindow.webContents.send("cli:logged-in", false);
     } else {
       console.error(`Error while attempting to logout. Output: ${output}`);
     }
+  });
+}
+
+// Connect
+function quickConnect() {
+  console.log("Received quick connect");
+  cliQuickConnect((output) => {
+    if (output.includes("You are not logged in")) {
+      console.log("Tried to connect but user is logged out");
+      mainWindow.webContents.send("cli:logged-in", false);
+    }
+    console.log("Ran quick connect");
+    console.log(output);
   });
 }
 
@@ -226,7 +241,7 @@ function cliLogin(callback) {
 }
 
 function cliLoginWithCredentials(email, password, callback) {
-  execute(`nordvpn login -u ${email} -p ${password}`, callback);
+  execute(`nordvpn login --username ${email} --password ${password}`, callback);
 }
 
 function cliLogout(callback) {
@@ -235,6 +250,10 @@ function cliLogout(callback) {
 
 function cliStatus(callback) {
   execute("nordvpn status", callback);
+}
+
+function cliQuickConnect(callback) {
+  execute("nordvpn connect", callback);
 }
 
 /* Nord API calls */

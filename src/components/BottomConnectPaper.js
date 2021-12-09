@@ -1,12 +1,19 @@
 import { Button, Container, Grid, Paper } from "@mui/material";
 import { styled } from "@mui/styles";
 import { Box } from "@mui/system";
+import { ipcRenderer } from "electron";
 import React from "react";
 
 const ConnectButton = styled(Button)(({ theme }) => ({
   color: "white",
   whiteSpace: "nowrap",
 }));
+
+const handleQuickConnectClick = (event) => {
+  // Send quick connect action to main
+  console.log("Sending quick connect to main");
+  ipcRenderer.send("cli:quick-connect");
+};
 
 export default function BottomConnectPaper({ connectedServer }) {
   return (
@@ -22,8 +29,8 @@ export default function BottomConnectPaper({ connectedServer }) {
       <Box
         sx={{
           textAlign: "",
-          height: 60,
-          lineHeight: "60px",
+          height: 100,
+          lineHeight: "100px",
           backgroundColor: "primary.dark",
         }}>
         <Container>
@@ -32,7 +39,10 @@ export default function BottomConnectPaper({ connectedServer }) {
               {connectedServer ? connectedServer.status : "Disconnected"}
             </Grid>
             <Grid item xs={4}>
-              <ConnectButton variant="contained" color="success">
+              <ConnectButton
+                variant="contained"
+                color="success"
+                onClick={handleQuickConnectClick}>
                 Quick Connect
               </ConnectButton>
             </Grid>
