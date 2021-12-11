@@ -4,6 +4,7 @@ const fetch = require("electron-fetch").default;
 const { app, BrowserWindow, dialog, ipcMain } = require("electron");
 const child_process = require("child_process");
 const groupBy = require("json-groupby");
+const servers = require("./resources/nordvpn-servers");
 
 let mainWindow;
 
@@ -171,14 +172,12 @@ function disconnect() {
 ipcMain.on("api:fetch-servers", handleFetchServers);
 
 function handleFetchServers() {
-  fetchServers((servers) => {
-    // Sort servers by ascending load
-    servers.sort(sortByLoad);
+  // Sort servers by ascending load
+  servers.sort(sortByLoad);
 
-    // Group by country
-    let serversByCountry = groupBy(servers, ["country"]);
-    sendServers(serversByCountry);
-  });
+  // Group by country
+  let serversByCountry = groupBy(servers, ["country"]);
+  sendServers(serversByCountry);
 
   // ascending order
   function sortByLoad(x, y) {
@@ -267,7 +266,7 @@ function cliDisconnect(callback) {
   execute("nordvpn disconnect", callback);
 }
 
-/* Nord API calls */
+/* NordVPN API calls */
 const apiUrl = "https://api.nordvpn.com/server";
 
 function fetchServers(callback) {
