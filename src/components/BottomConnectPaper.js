@@ -3,6 +3,8 @@ import { styled } from "@mui/styles";
 import { Box } from "@mui/system";
 import { ipcRenderer } from "electron";
 import React from "react";
+import LockTwoToneIcon from "@mui/icons-material/LockTwoTone";
+import LockOpenTwoToneIcon from "@mui/icons-material/LockOpenTwoTone";
 
 const ConnectButton = styled(Button)(({ theme }) => ({
   color: "white",
@@ -34,6 +36,7 @@ export default function BottomConnectPaper({ connectedServer }) {
         position: "fixed",
         bottom: 50,
         left: "40%",
+        borderRadius: "20px",
       }}>
       <Box
         sx={{
@@ -41,11 +44,36 @@ export default function BottomConnectPaper({ connectedServer }) {
           height: 100,
           lineHeight: "100px",
           backgroundColor: "primary.dark",
+          borderRadius: "20px",
+          border: connectedServer ? "2px solid #4caf50" : "2px solid #f44336",
         }}>
         <Container>
-          <Grid container>
+          <Grid
+            container
+            direction="row"
+            justifyContent="center"
+            alignItems="flex-start">
             <Grid item xs={8}>
-              {connectedServer ? connectedServer.status : "Disconnected"}
+              {connectedServer ? (
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    flexWrap: "wrap",
+                  }}>
+                  <LockTwoToneIcon sx={{ color: "#4caf50" }} /> Connected to{" "}
+                  {connectedServer.country}
+                </div>
+              ) : (
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    flexWrap: "wrap",
+                  }}>
+                  <LockOpenTwoToneIcon sx={{ color: "#f44336" }} /> Disconnected
+                </div>
+              )}
             </Grid>
             <Grid item xs={4}>
               {connectedServer ? (
