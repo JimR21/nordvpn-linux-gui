@@ -100,6 +100,10 @@ ipcMain.on("cli:logout", logoutAndSendResult);
 
 ipcMain.on("cli:quick-connect", quickConnect);
 
+ipcMain.on("cli:connect", (e, server) => {
+  connect(server);
+});
+
 ipcMain.on("cli:disconnect", disconnect);
 
 // Send to window if user is logged in
@@ -146,18 +150,30 @@ function logoutAndSendResult() {
   });
 }
 
-// Connect
 function quickConnect() {
   cliQuickConnect((output) => {
-    if (output.includes("You are not logged in")) {
-      // Send login flag set to false
-      console.log("Tried to connect but the user is logged out");
-      mainWindow.webContents.send("cli:logged-in", false);
-    }
+    handleCliConnectOutput(output);
   });
 }
 
-// Connect
+function connect(server) {
+  cliConnect(server, (output) => {
+    handleCliConnectOutput(output);
+  });
+}
+
+function handleCliConnectOutput(output) {
+  if (output.includes("You are not logged in")) {
+    // Send login flag set to false
+    console.log("Tried to connect but the user is logged out");
+    mainWindow.webContents.send("cli:logged-in", false);
+  }
+  if (output.includes("Whoops!")) {
+    console.log("Tried to connect but something went wrong");
+    mainWindow.webContents.send("cli:error", output);
+  }
+}
+
 function disconnect() {
   cliDisconnect((output) => {
     if (output.includes("You are not connected to NordVPN")) {
@@ -260,6 +276,10 @@ function cliStatus(callback) {
 
 function cliQuickConnect(callback) {
   execute("nordvpn connect", callback);
+}
+
+function cliConnect(server, callback) {
+  execute(`nordvpn connect ${server}`, callback);
 }
 
 function cliDisconnect(callback) {
