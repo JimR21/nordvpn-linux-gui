@@ -1,10 +1,10 @@
-import { ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 import PublicIcon from "@mui/icons-material/Public";
+import { ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 import React from "react";
 
 function VpnServerListItem({ server }) {
   return (
-    <ListItemButton>
+    <ListItemButton id={server.domain}>
       <ListItemIcon>
         <PublicIcon sx={{ color: "white" }} />
       </ListItemIcon>
