@@ -22,11 +22,17 @@ const handleConnectClick = (event) => {
   ipcRenderer.send("cli:connect", event.currentTarget.id);
 };
 
-export const CountryServerGroup = ({ countryGroup }) => {
+export const CountryServerGroup = ({ countryGroup, connectedServer }) => {
   const vpnServerListItem = (countryGroup) => {
     const listItems = [];
     countryGroup.forEach((server) => {
-      listItems.push(<VpnServerListItem key={server.id} server={server} />);
+      listItems.push(
+        <VpnServerListItem
+          key={server.id}
+          server={server}
+          isConnected={server.id == connectedServer.server}
+        />
+      );
     });
     return listItems;
   };
@@ -83,7 +89,11 @@ export const CountryServerGroup = ({ countryGroup }) => {
                 id={countryGroup[0].flag}
                 size="small"
                 variant="outlined"
-                color="success"
+                color={
+                  countryGroup[0].country == connectedServer.country
+                    ? "success"
+                    : "error"
+                }
                 onClick={handleConnectClick}>
                 <LockTwoTone />
               </Button>

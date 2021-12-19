@@ -27,7 +27,7 @@ const Dashboard = () => {
           }}>
           <Grid container spacing={2}>
             <Grid item xs={3}>
-              <ServersList />
+              <ServersList connectedServer={connectedServer} />
             </Grid>
             <Grid item xs={9}>
               <MainWindow connectedServer={connectedServer} />

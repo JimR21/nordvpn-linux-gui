@@ -2,7 +2,7 @@ import { ipcRenderer } from "electron";
 import React, { useEffect, useState } from "react";
 import { CountryServerGroup } from "./CountryServerGroup";
 
-export default function ServersList() {
+export default function ServersList({ connectedServer }) {
   const [open, setOpen] = useState(true);
   const [serversByCountry, setServersByCountry] = useState([]);
 
@@ -29,7 +29,11 @@ export default function ServersList() {
     for (const country in servers) {
       let countryGroup = servers[country];
       countryGroups.push(
-        <CountryServerGroup key={country} countryGroup={countryGroup} />
+        <CountryServerGroup
+          key={country}
+          countryGroup={countryGroup}
+          connectedServer={connectedServer}
+        />
       );
     }
     return countryGroups;

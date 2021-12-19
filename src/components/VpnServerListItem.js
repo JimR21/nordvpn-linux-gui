@@ -2,7 +2,7 @@ import PublicIcon from "@mui/icons-material/Public";
 import { ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 import React from "react";
 
-function VpnServerListItem({ server }) {
+function VpnServerListItem({ server, isConnected }) {
   return (
     <ListItemButton id={server.domain}>
       <ListItemIcon>
